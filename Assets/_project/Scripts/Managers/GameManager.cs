@@ -143,11 +143,17 @@ public class GameManager : MonoBehaviour
     public void PlatformFlipped()
     {
         if (UnFlippedPlatforms >= 1) return;
+        NextLevel();
+    }
+
+    void NextLevel()
+    {
         _qBert.gameObject.SetActive(false);
         GameState = GameStates.LevelComplete;
         MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_victorySound);
         ScoreManager.Instance.AddLevel();
+        ResetPlatforms();
         Invoke(nameof(StartRound), 9f);
     }
 
