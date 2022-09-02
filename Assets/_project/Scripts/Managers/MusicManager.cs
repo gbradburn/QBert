@@ -25,7 +25,7 @@ public class MusicManager : MonoBehaviour
     public void PlayIntroMusic()
     {
         _audioSource.Stop();
-//        _audioSource.PlayOneShot(_introMusic, .5f);
+        _audioSource.PlayOneShot(_introMusic, .25f);
     }
 
     public void PlayGameMusic()
@@ -33,7 +33,7 @@ public class MusicManager : MonoBehaviour
         _audioSource.clip = _gameMusic;
         _audioSource.volume = 1f;
         _audioSource.loop = true;
-//        _audioSource.Play();
+        _audioSource.Play();
     }
 
     public void Stop()

@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -59,7 +61,26 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void ResetPlatforms()
+    public void ShowVictoryEffect()
+    {
+        StartCoroutine(FlashPlatformColors(8.5f));
+    }
+
+    IEnumerator FlashPlatformColors(float duration)
+    {
+        while (duration > 0f)
+        {
+            duration -= Time.deltaTime;
+            foreach (var platform in _platforms)
+            {
+                platform.SetPlatformColor(Random.ColorHSV());
+            }
+
+            yield return null;
+        }
+    }
+    
+    void ResetPlatforms()
     {
         if (UnFlippedPlatforms == _platforms.Count) return;
         foreach (var platform in _platforms.Where(platform => platform.Flipped))
@@ -67,7 +88,7 @@ public class BoardManager : MonoBehaviour
             platform.SetFlippedState(false);
         }
     }
-
+    
     void CreateTransportDiscs()
     {
         foreach (Vector3 discPosition in _transportDiscPositions)
@@ -75,6 +96,7 @@ public class BoardManager : MonoBehaviour
             var disc = Instantiate(_transportDiscPrefab, discPosition, Quaternion.identity)
                 .GetComponent<TransportDisc>();
             _transportDiscs.Add(disc);
+            disc.transform.SetParent(_transform);
         }
     }
     

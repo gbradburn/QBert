@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -78,13 +78,14 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
         GameState = GameStates.GameStarted;
+        Lives = 3;
         StartRound();
     }
     
     void StartRound()
     {
-        GameState = GameStates.RoundStarted;
         SpawnQBert();
+        GameState = GameStates.RoundStarted;
         MusicManager.Instance.PlayGameMusic();
     }
 
@@ -103,22 +104,30 @@ public class GameManager : MonoBehaviour
     public void PlatformFlipped()
     {
         if (_boardManager.UnFlippedPlatforms >= 1) return;
-        NextLevel();
+        StartCoroutine(NextLevel());
     }
 
-    void NextLevel()
+    IEnumerator NextLevel()
     {
         _qBert.gameObject.SetActive(false);
         GameState = GameStates.LevelComplete;
         MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_victorySound);
+        _boardManager.ShowVictoryEffect();
+        yield return new WaitForSeconds(9f);
         ScoreManager.Instance.AddLevel();
         _boardManager.SetUpBoard();
-        Invoke(nameof(StartRound), 9f);
+        StartRound();
     }
 
     public void QBertDied()
     {
+        StartCoroutine(HandleQBertDeath());
+    }
+
+    IEnumerator HandleQBertDeath()
+    {
+        yield return new WaitForSeconds(3f);
         _qBert.gameObject.SetActive(false);
         if (Lives > 0)
         {
@@ -132,7 +141,7 @@ public class GameManager : MonoBehaviour
 
     void GameOver()
     {
-        SoundManager.Instance.PlayAudioClip(_gameOverSound);
+        SoundManager.Instance.PlayAudioClip(_gameOverSound, 0.25f);
         GameState = GameStates.GameOver;
         Invoke(nameof(ReadyToPlay), 3f);
     }

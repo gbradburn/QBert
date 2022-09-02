@@ -12,7 +12,7 @@ public class Platform : MonoBehaviour, IPlatform
     public void SetFlippedState(bool flipped)
     {
         Flipped = flipped;
-        SetPlatformColor();
+        SetPlatformMaterial();
         if (flipped)
         {
             SoundManager.Instance.PlayAudioClip(_flipSound, 0.25f);
@@ -21,7 +21,12 @@ public class Platform : MonoBehaviour, IPlatform
         GameManager.Instance.PlatformFlipped();
     }
 
-    void SetPlatformColor()
+    public void SetPlatformColor(Color color)
+    {
+        _platformRenderer.material.color = color;
+    }
+
+    void SetPlatformMaterial()
     {
         _platformRenderer.material = Flipped ? _platformFlipped : _platformNormal;
     }

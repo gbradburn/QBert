@@ -12,7 +12,7 @@ public class QBert : MonoBehaviour
     
     static readonly int JumpTrigger = Animator.StringToHash("Jump");
     static readonly int LandTrigger = Animator.StringToHash("Land");
-    bool _jumping = false;
+    bool _jumping = false, _dead = false;
     Transform _transform;
     Rigidbody _rigidbody;
 
@@ -33,10 +33,9 @@ public class QBert : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (_jumping) return;
+        if (_dead || _jumping) return;
 
         if (!ReceivedPlayerInput(out var desiredFacing, out var landingPosition)) return;
         
@@ -71,7 +70,7 @@ public class QBert : MonoBehaviour
 
     public void ResetQBert()
     {
-        _jumping = false;
+        _jumping = _dead = false;
         _transform.position = _startPosition;
         Body.eulerAngles = _startRotation;
         _rigidbody.velocity = _rigidbody.angularVelocity = Vector3.zero;
@@ -126,7 +125,7 @@ public class QBert : MonoBehaviour
     void JumpOffEdge(Vector3 targetPosition)
     {
         MusicManager.Instance.Stop();
-        SoundManager.Instance.PlayAudioClip(_fallSound);
+        SoundManager.Instance.PlayAudioClip(_fallSound, 0.25f);
         Vector3 fallPosition = targetPosition;
         fallPosition.y = -10;
         if (targetPosition.z > 20)
@@ -158,7 +157,8 @@ public class QBert : MonoBehaviour
         }
 
         _transform.DOJump(fallPosition, 25, 1, 1).SetEase(Ease.InSine);
-        Invoke(nameof(Die), 3f);
+        _dead = true;
+        GameManager.Instance.QBertDied();
     }
     
     void TriggerLandingAnimation()
@@ -170,11 +170,6 @@ public class QBert : MonoBehaviour
     bool CollidedWithPlatform(Collision collision, out IPlatform platform)
     {
         return collision.collider.gameObject.TryGetComponent<IPlatform>(out platform);
-    }
-
-    void Die()
-    {
-        GameManager.Instance.QBertDied();
     }
 
     void PlayJumpSound()
