@@ -273,7 +273,15 @@ MonoBehaviour:
     type: 3}
   _victorySound: {fileID: 8300000, guid: 8f3978978361a4c41a8b2c5265d2681a, type: 3}
   _gameOverSound: {fileID: 8300000, guid: 9ba5f9744046a0e4d90e70c99068f103, type: 3}
+  _transportDiscPrefab: {fileID: 4099987069350599295, guid: 9635f04c94793c54f9bd7f9a10370da5,
+    type: 3}
+  _TransportDiscPositions:
+  - {x: -4, y: 6, z: 3}
+  - {x: 15, y: 6, z: 22}
   LivesChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  GameStateChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4822085717319511142

@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,6 +9,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _qBertPrefab;
     [SerializeField] GameObject _squarePrefab;
     [SerializeField] AudioClip _victorySound, _gameOverSound;
+    [SerializeField] TransportDisc _transportDiscPrefab;
+    [SerializeField] Vector3[] _TransportDiscPositions;
     public static GameManager Instance;
 
     public enum GameStates
@@ -34,11 +35,17 @@ public class GameManager : MonoBehaviour
     }
     
     List<IPlatform> _platforms;
+    List<TransportDisc> _transportDiscs;
     Transform _transform;
     QBert _qBert;
     int _lives;
 
     public int UnFlippedPlatforms => _platforms.Count(p => !p.Flipped);
+
+    public TransportDisc TransportDiscAtPosition(Vector3 position)
+    {
+        return _transportDiscs.FirstOrDefault(d => Vector3.Distance(position, d.transform.position) < 3.5f);
+    }
 
     public int Lives
     {
@@ -95,6 +102,14 @@ public class GameManager : MonoBehaviour
 
     void SetUpBoard()
     {
+        _transportDiscs = new List<TransportDisc>(); 
+            
+        foreach (Vector3 discPosition in _TransportDiscPositions)
+        {
+            var disc = Instantiate(_transportDiscPrefab, discPosition, Quaternion.identity)
+                .GetComponent<TransportDisc>();
+            _transportDiscs.Add(disc);
+        }
         if (_platforms?.Count > 0)
         {
             ResetPlatforms();

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4136510909914954350}
   - component: {fileID: 4136510909914954349}
   - component: {fileID: 4136510909914954344}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: QBert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,10 +149,110 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e67fca07b275ece46b3a3202e0f8c4c7, type: 2}
+    - target: {fileID: -7810634022189482717, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -5901347439615003070, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -4848765024136999451, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -3576598941466245076, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -3348839673366044307, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -3071384134618422712, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -2740343358212403417, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -1336554099295012282, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -1174815651992638757, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c3677955357055942adfce893870977c,
         type: 3}
       propertyPath: m_Name
       value: QBert
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1170293213474972300, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2628036445888937223, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3901066865497383086, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5399434576875086241, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5787918083062509927, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5838292161595133097, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6959751451785436015, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6973219904430123845, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6975798357063349572, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7036213049465896255, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8833866195459763817, guid: c3677955357055942adfce893870977c,
         type: 3}
@@ -164,6 +264,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e67fca07b275ece46b3a3202e0f8c4c7, type: 2}
+    - target: {fileID: 9221951374779766803, guid: c3677955357055942adfce893870977c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3677955357055942adfce893870977c, type: 3}
 --- !u!1 &3865987407059544675 stripped

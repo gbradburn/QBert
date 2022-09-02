@@ -45,6 +45,10 @@ public class QBert : MonoBehaviour
 
         if (LandingOutOfBounds(landingPosition))
         {
+            if (JumpedToDisc(landingPosition))
+            {
+                return;
+            }
             JumpOffEdge(landingPosition);
             return;
         }
@@ -75,7 +79,7 @@ public class QBert : MonoBehaviour
         _rigidbody.velocity = _rigidbody.angularVelocity = Vector3.zero;
         gameObject.SetActive(true);
     }
-    
+
     bool ReceivedPlayerInput(out Vector3 desiredFacing, out Vector3 landingPosition)
     {
         landingPosition = _transform.position;
@@ -180,14 +184,35 @@ public class QBert : MonoBehaviour
         SoundManager.Instance.PlayAudioClip(_jumpSound);
     }
 
-    void ChangeFacing(Vector3 desiredFacing)
+    public void ChangeFacing(Vector3 desiredFacing)
     {
         if (desiredFacing != NoChange)
         {
             Body.DORotate(desiredFacing, 0.25f).SetAutoKill();
         }
     }
+    
+    
+    bool JumpedToDisc(Vector3 landingPosition)
+    {
+        Vector3 discPosition = landingPosition;
+        discPosition.y -= 3;
+        var disc = GameManager.Instance.TransportDiscAtPosition(discPosition);
+        if (!disc) return false;
+        ChangeFacing(_transform.position.z < 10 ? NorthEast : NorthWest);
+        PlayJumpSound();
+        PerformJump(disc.transform.position);
+        return true;
+    }
 
+    public void JumpToPlatform()
+    {
+        _transform.SetParent(null);
+        _jumping = true;
+        ChangeFacing(_transform.position.x < 0 ? SouthEast : SouthWest);
+        PlayJumpSound();
+        PerformJump(_startPosition);
+    }
 
     void PerformJump(Vector3 landingPosition)
     {
