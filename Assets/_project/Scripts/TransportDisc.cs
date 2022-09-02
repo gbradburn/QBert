@@ -34,6 +34,7 @@ public class TransportDisc : MonoBehaviour
         if (!collision.collider.gameObject.TryGetComponent(out _qBert)) return;
         _qBert.transform.SetParent(_transform);
         ActivateDisc();
+        _qBert.LandedOnDisc(_transform.position.x < 0);
     }
 
     void ActivateDisc()

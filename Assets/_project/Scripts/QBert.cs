@@ -10,8 +10,6 @@ public class QBert : MonoBehaviour
 
     [SerializeField] Vector3 _startPosition, _startRotation;
     
-    public Transform Body { get; private set; }
-    
     static readonly int JumpTrigger = Animator.StringToHash("Jump");
     static readonly int LandTrigger = Animator.StringToHash("Land");
     bool _jumping = false;
@@ -23,6 +21,10 @@ public class QBert : MonoBehaviour
     readonly Vector3 NorthWest = new Vector3(0, 270, 0);
     readonly Vector3 SouthEast = new Vector3(0, 90, 0);
     readonly Vector3 SouthWest = new Vector3(0, 180, 0);
+
+    BoardManager BoardManager => GameManager.Instance.BoardManager;
+    
+    public Transform Body { get; private set; }
     
     void Awake()
     {
@@ -40,9 +42,6 @@ public class QBert : MonoBehaviour
         
         ChangeFacing(desiredFacing);
         
-        _jumping = true;
-        _animator.SetBool(JumpTrigger, true);
-
         if (LandingOutOfBounds(landingPosition))
         {
             if (JumpedToDisc(landingPosition))
@@ -53,15 +52,14 @@ public class QBert : MonoBehaviour
             return;
         }
             
-        PlayJumpSound();
         PerformJump(landingPosition);
     }
 
     void OnCollisionEnter(Collision collision)
     {
         if (!_jumping) return;
-        if (!CollidedWithPlatform(collision, out var platform)) return;
         TriggerLandingAnimation();
+        if (!CollidedWithPlatform(collision, out var platform)) return;
         _jumping = false;
         if (!platform.Flipped)
         {
@@ -183,8 +181,18 @@ public class QBert : MonoBehaviour
     {
         SoundManager.Instance.PlayAudioClip(_jumpSound);
     }
-
-    public void ChangeFacing(Vector3 desiredFacing)
+    
+    bool JumpedToDisc(Vector3 landingPosition)
+    {
+        Vector3 discPosition = landingPosition;
+        discPosition.y -= 3;
+        var disc = BoardManager.TransportDiscAtPosition(discPosition);
+        if (!disc) return false;
+        PerformJump(disc.transform.position);
+        return true;
+    }
+    
+    void ChangeFacing(Vector3 desiredFacing)
     {
         if (desiredFacing != NoChange)
         {
@@ -192,31 +200,25 @@ public class QBert : MonoBehaviour
         }
     }
     
-    
-    bool JumpedToDisc(Vector3 landingPosition)
+    void PerformJump(Vector3 landingPosition)
     {
-        Vector3 discPosition = landingPosition;
-        discPosition.y -= 3;
-        var disc = GameManager.Instance.TransportDiscAtPosition(discPosition);
-        if (!disc) return false;
-        ChangeFacing(_transform.position.z < 10 ? NorthEast : NorthWest);
+        _jumping = true;
+        _animator.SetBool(JumpTrigger, true);
         PlayJumpSound();
-        PerformJump(disc.transform.position);
-        return true;
+        _transform.DOJump(landingPosition, 4, 1, 0.5f, false).SetEase(Ease.Linear).SetAutoKill();
     }
 
     public void JumpToPlatform()
     {
         _transform.SetParent(null);
-        _jumping = true;
         ChangeFacing(_transform.position.x < 0 ? SouthEast : SouthWest);
-        PlayJumpSound();
         PerformJump(_startPosition);
     }
-
-    void PerformJump(Vector3 landingPosition)
-    {
-        _transform.DOJump(landingPosition, 4, 1, 0.5f, false).SetEase(Ease.Linear).SetAutoKill();
-    }
     
+
+    public void LandedOnDisc(bool left)
+    {
+        TriggerLandingAnimation();
+        ChangeFacing(left ? NorthEast : NorthWest);
+    }
 }

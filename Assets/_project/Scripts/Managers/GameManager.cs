@@ -1,18 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] GameObject _qBertPrefab;
-    [SerializeField] GameObject _squarePrefab;
-    [SerializeField] AudioClip _victorySound, _gameOverSound;
-    [SerializeField] TransportDisc _transportDiscPrefab;
-    [SerializeField] Vector3[] _TransportDiscPositions;
-    public static GameManager Instance;
-
     public enum GameStates
     {
         Ready,
@@ -21,9 +12,16 @@ public class GameManager : MonoBehaviour
         LevelComplete,
         GameOver
     }
-
+    
+    [SerializeField] GameObject _qBertPrefab;
+    [SerializeField] AudioClip _victorySound, _gameOverSound;
     GameStates _gameState;
+    BoardManager _boardManager;
+    Transform _transform;
+    QBert _qBert;
+    int _lives;
 
+    public static GameManager Instance;
     public GameStates GameState
     {
         get => _gameState;
@@ -33,19 +31,8 @@ public class GameManager : MonoBehaviour
             GameStateChanged.Invoke();
         }
     }
-    
-    List<IPlatform> _platforms;
-    List<TransportDisc> _transportDiscs;
-    Transform _transform;
-    QBert _qBert;
-    int _lives;
+    public BoardManager BoardManager => _boardManager;
 
-    public int UnFlippedPlatforms => _platforms.Count(p => !p.Flipped);
-
-    public TransportDisc TransportDiscAtPosition(Vector3 position)
-    {
-        return _transportDiscs.FirstOrDefault(d => Vector3.Distance(position, d.transform.position) < 3.5f);
-    }
 
     public int Lives
     {
@@ -71,6 +58,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
         _transform = transform;
+        _boardManager = GetComponent<BoardManager>();
     }
 
     void Start()
@@ -100,49 +88,6 @@ public class GameManager : MonoBehaviour
         MusicManager.Instance.PlayGameMusic();
     }
 
-    void SetUpBoard()
-    {
-        _transportDiscs = new List<TransportDisc>(); 
-            
-        foreach (Vector3 discPosition in _TransportDiscPositions)
-        {
-            var disc = Instantiate(_transportDiscPrefab, discPosition, Quaternion.identity)
-                .GetComponent<TransportDisc>();
-            _transportDiscs.Add(disc);
-        }
-        if (_platforms?.Count > 0)
-        {
-            ResetPlatforms();
-            return;
-        }
-        _platforms = new List<IPlatform>();
-        int blocksPerRow = 7;
-        int y = 0;
-        int startZ = 0;
-        while (blocksPerRow > 0)
-        {
-            for (int i = 0; i < blocksPerRow; ++i)
-            {
-                GameObject square = Instantiate(_squarePrefab, _transform);
-                square.transform.localPosition = new Vector3(i * 3, y, startZ + i * 3);
-                _platforms.Add(square.GetComponentInChildren<IPlatform>());
-            }
-
-            --blocksPerRow;
-            startZ += 3;
-            y += 3;
-        }
-    }
-
-    void ResetPlatforms()
-    {
-        if (UnFlippedPlatforms == _platforms.Count) return;
-        foreach (var platform in _platforms.Where(platform => platform.Flipped))
-        {
-            platform.SetFlippedState(false);
-        }
-    }
-    
     void SpawnQBert()
     {
         if (!_qBert)
@@ -157,7 +102,7 @@ public class GameManager : MonoBehaviour
 
     public void PlatformFlipped()
     {
-        if (UnFlippedPlatforms >= 1) return;
+        if (_boardManager.UnFlippedPlatforms >= 1) return;
         NextLevel();
     }
 
@@ -168,7 +113,7 @@ public class GameManager : MonoBehaviour
         MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_victorySound);
         ScoreManager.Instance.AddLevel();
-        ResetPlatforms();
+        _boardManager.SetUpBoard();
         Invoke(nameof(StartRound), 9f);
     }
 
@@ -197,7 +142,7 @@ public class GameManager : MonoBehaviour
         MusicManager.Instance.PlayIntroMusic();
         Lives = 3;
         ScoreManager.Instance.ResetScore();
-        SetUpBoard();
+        _boardManager.SetUpBoard();
         GameState = GameStates.Ready;
     }
 }
