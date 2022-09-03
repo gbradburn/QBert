@@ -9,17 +9,20 @@ public class GameManager : MonoBehaviour
         Ready,
         GameStarted,
         RoundStarted,
+        QBertDied,
         LevelComplete,
         GameOver
     }
     
     [SerializeField] GameObject _qBertPrefab;
+    [SerializeField] Vector3 _qBertStartPosition, _qBertStartRotation;
     [SerializeField] AudioClip _victorySound, _gameOverSound;
     GameStates _gameState;
     BoardManager _boardManager;
     Transform _transform;
     QBert _qBert;
     int _lives;
+    Vector3 _qBertSpawnPosition, _qBertSpawnRotation;
 
     public static GameManager Instance;
     public GameStates GameState
@@ -31,8 +34,10 @@ public class GameManager : MonoBehaviour
             GameStateChanged.Invoke();
         }
     }
-    public BoardManager BoardManager => _boardManager;
 
+    public bool IsPlaying => GameState == GameStates.RoundStarted;
+    public BoardManager BoardManager => _boardManager;
+    public Transform Qbert => _qBert.transform;
 
     public int Lives
     {
@@ -96,7 +101,7 @@ public class GameManager : MonoBehaviour
             _qBert = Instantiate(_qBertPrefab, _transform).GetComponent<QBert>();
         }
 
-        _qBert.ResetQBert();
+        _qBert.ResetQBert(_qBertSpawnPosition, _qBertSpawnRotation);
             
         --Lives;
     }
@@ -122,12 +127,15 @@ public class GameManager : MonoBehaviour
 
     public void QBertDied()
     {
+        GameState = GameStates.QBertDied;
         StartCoroutine(HandleQBertDeath());
     }
 
     IEnumerator HandleQBertDeath()
     {
         yield return new WaitForSeconds(3f);
+        _qBertSpawnPosition = _qBert.transform.position;
+        _qBertSpawnRotation = _qBert.Body.eulerAngles;
         _qBert.gameObject.SetActive(false);
         if (Lives > 0)
         {
@@ -150,6 +158,8 @@ public class GameManager : MonoBehaviour
     {
         MusicManager.Instance.PlayIntroMusic();
         Lives = 3;
+        _qBertSpawnPosition = _qBertStartPosition;
+        _qBertSpawnRotation = _qBertStartRotation;
         ScoreManager.Instance.ResetScore();
         _boardManager.SetUpBoard();
         GameState = GameStates.Ready;

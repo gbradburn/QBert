@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -13,20 +12,73 @@ public class BoardManager : MonoBehaviour
     List<IPlatform> _platforms;
     List<TransportDisc> _transportDiscs;
     Transform _transform;
+    List<Vector3> _downDirections, _upDirections;
 
     void Awake()
     {
         _transform = transform;
         _transportDiscs = new List<TransportDisc>();
+        _downDirections = new List<Vector3>
+        {
+            new Vector3(3, -3, 0),
+            new Vector3(0, -3, -3)
+        };
+        _upDirections = new List<Vector3>
+        {
+            new Vector3(-3, 3, 0),
+            new Vector3(0, 3, 3)
+        };
+        
     }
 
     public int UnFlippedPlatforms => _platforms.Count(p => !p.Flipped);
+
+    public static readonly Vector3 NoChange = Vector3.up;
+    public static readonly Vector3 NorthEast = Vector3.zero;
+    public static readonly Vector3 NorthWest = new Vector3(0, 270, 0);
+    public static readonly Vector3 SouthEast = new Vector3(0, 90, 0);
+    public static readonly Vector3 SouthWest = new Vector3(0, 180, 0);    
+    
+    public static bool LandingOutOfBounds(Vector3 targetPosition)
+    {
+        return targetPosition.z is > 20 or < 0 || targetPosition.x is < 0 or > 18 || targetPosition.y < 2.5f;
+    }
+    
+    public int LegalJumpLocations(List<Vector3> legalJumpPositions, Vector3 position, bool down = true)
+    {
+        legalJumpPositions.Clear();
+
+        if (down)
+        {
+            foreach (var vector in _downDirections)
+            {
+                Vector3 landingPosition = position + vector;
+                if (!BoardManager.LandingOutOfBounds(landingPosition))
+                {
+                    legalJumpPositions.Add(landingPosition);
+                }
+            }
+
+            return legalJumpPositions.Count;
+        }
+
+        foreach (var vector in _upDirections)
+        {
+            Vector3 landingPosition = position + vector;
+            if (!BoardManager.LandingOutOfBounds(position))
+            {
+                legalJumpPositions.Add(position);
+            }
+        }
+
+        return legalJumpPositions.Count;
+    }     
 
     public TransportDisc TransportDiscAtPosition(Vector3 position)
     {
         return _transportDiscs.FirstOrDefault(disc => Vector3.Distance(position, disc.transform.position) < 3f);
     }
-
+    
     public void SetUpBoard()
     {
         if (_transportDiscs.Count > 0)

@@ -6,21 +6,15 @@ public class QBert : MonoBehaviour
     [SerializeField]
     Animator _animator;
 
-    [SerializeField] AudioClip _jumpSound, _landSound, _fallSound;
+    [SerializeField] AudioClip _jumpSound, _landSound, _fallSound, _deathSound;
+    [SerializeField] GameObject _speechBubble;
 
-    [SerializeField] Vector3 _startPosition, _startRotation;
-    
     static readonly int JumpTrigger = Animator.StringToHash("Jump");
     static readonly int LandTrigger = Animator.StringToHash("Land");
     bool _jumping = false, _dead = false;
     Transform _transform;
     Rigidbody _rigidbody;
-
-    readonly Vector3 NoChange = Vector3.up;
-    readonly Vector3 NorthEast = Vector3.zero;
-    readonly Vector3 NorthWest = new Vector3(0, 270, 0);
-    readonly Vector3 SouthEast = new Vector3(0, 90, 0);
-    readonly Vector3 SouthWest = new Vector3(0, 180, 0);
+    Vector3 _startPosition;
 
     BoardManager BoardManager => GameManager.Instance.BoardManager;
     
@@ -35,13 +29,13 @@ public class QBert : MonoBehaviour
 
     void Update()
     {
-        if (_dead || _jumping) return;
+        if (!GameManager.Instance.IsPlaying || _dead || _jumping) return;
 
         if (!ReceivedPlayerInput(out var desiredFacing, out var landingPosition)) return;
         
         ChangeFacing(desiredFacing);
         
-        if (LandingOutOfBounds(landingPosition))
+        if (BoardManager.LandingOutOfBounds(landingPosition))
         {
             if (JumpedToDisc(landingPosition))
             {
@@ -68,11 +62,13 @@ public class QBert : MonoBehaviour
         SoundManager.Instance.PlayAudioClip(_landSound);
     }
 
-    public void ResetQBert()
+    public void ResetQBert(Vector3 spawnPosition, Vector3 spawnRotation)
     {
         _jumping = _dead = false;
-        _transform.position = _startPosition;
-        Body.eulerAngles = _startRotation;
+        _speechBubble.SetActive(false);
+        _animator.StartPlayback();
+        _startPosition = _transform.position = spawnPosition;
+        Body.eulerAngles = spawnRotation;
         _rigidbody.velocity = _rigidbody.angularVelocity = Vector3.zero;
         gameObject.SetActive(true);
     }
@@ -80,12 +76,12 @@ public class QBert : MonoBehaviour
     bool ReceivedPlayerInput(out Vector3 desiredFacing, out Vector3 landingPosition)
     {
         landingPosition = _transform.position;
-        desiredFacing = NoChange;
+        desiredFacing = BoardManager.NoChange;
         
         // up and right (NorthEast)
         if (Input.GetKey(KeyCode.E))
         {
-            desiredFacing = NorthEast;
+            desiredFacing = BoardManager.NorthEast;
             landingPosition.y += 3;
             landingPosition.z += 3;
         }
@@ -93,7 +89,7 @@ public class QBert : MonoBehaviour
         // up and left (NorthWest)
         else if (Input.GetKey(KeyCode.Q))
         {
-            desiredFacing = NorthWest;
+            desiredFacing = BoardManager.NorthWest;
             landingPosition.y += 3;
             landingPosition.x -= 3;
         }
@@ -101,7 +97,7 @@ public class QBert : MonoBehaviour
         // Down and right (SouthEast)
         else if (Input.GetKey(KeyCode.C))
         {
-            desiredFacing = SouthEast;
+            desiredFacing = BoardManager.SouthEast;
             landingPosition.y -= 3;
             landingPosition.x += 3;
         }
@@ -109,17 +105,12 @@ public class QBert : MonoBehaviour
         // Down and left (SouthWest)
         else if (Input.GetKey(KeyCode.Z))
         {
-            desiredFacing = SouthWest;
+            desiredFacing = BoardManager.SouthWest;
             landingPosition.y -= 3;
             landingPosition.z -= 3;
         }
 
         return landingPosition != _transform.position;
-    }
-
-    bool LandingOutOfBounds(Vector3 targetPosition)
-    {
-        return targetPosition.z is > 20 or < 0 || targetPosition.x is < 0 or > 18 || targetPosition.y < 2.5f;
     }
 
     void JumpOffEdge(Vector3 targetPosition)
@@ -146,7 +137,7 @@ public class QBert : MonoBehaviour
         }
         else
         {
-            if (Body.eulerAngles == SouthEast)
+            if (Body.eulerAngles == BoardManager.SouthEast)
             {
                 fallPosition.x += 10;
             }
@@ -189,7 +180,7 @@ public class QBert : MonoBehaviour
     
     void ChangeFacing(Vector3 desiredFacing)
     {
-        if (desiredFacing != NoChange)
+        if (desiredFacing != BoardManager.NoChange)
         {
             Body.DORotate(desiredFacing, 0.25f).SetAutoKill();
         }
@@ -206,7 +197,7 @@ public class QBert : MonoBehaviour
     public void JumpToPlatform()
     {
         _transform.SetParent(null);
-        ChangeFacing(_transform.position.x < 0 ? SouthEast : SouthWest);
+        ChangeFacing(_transform.position.x < 0 ? BoardManager.SouthEast : BoardManager.SouthWest);
         PerformJump(_startPosition);
     }
     
@@ -214,6 +205,16 @@ public class QBert : MonoBehaviour
     public void LandedOnDisc(bool left)
     {
         TriggerLandingAnimation();
-        ChangeFacing(left ? NorthEast : NorthWest);
+        ChangeFacing(left ? BoardManager.NorthEast : BoardManager.NorthWest);
+    }
+
+    public void KillQBert()
+    {
+        if (_dead) return;
+        _dead = true;
+        SoundManager.Instance.PlayAudioClip(_deathSound);
+        _animator.StopPlayback();
+        _speechBubble.SetActive(true);
+        GameManager.Instance.QBertDied();
     }
 }

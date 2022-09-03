@@ -38,6 +38,7 @@ public class Scoreboard : MonoBehaviour
                 _playAgainText.gameObject.SetActive(false);
                 break;
             case GameManager.GameStates.RoundStarted:
+            case GameManager.GameStates.QBertDied:
                 _levelCompleteText.gameObject.SetActive(false);
                 _levelText.gameObject.SetActive(true);
                 _gameOverText.gameObject.SetActive(false);
