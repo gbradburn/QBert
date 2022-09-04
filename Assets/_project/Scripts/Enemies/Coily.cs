@@ -13,6 +13,7 @@ public class Coily : MonoBehaviour
     [SerializeField] float _jumpDelay = 0.5f;
     float _delay;
     bool _jumping = false;
+    bool _dead = false;
     Transform _transform;
     static readonly int Jumping = Animator.StringToHash("Jumping");
     static readonly int Landed = Animator.StringToHash("Landed");
@@ -35,7 +36,7 @@ public class Coily : MonoBehaviour
 
     void Update()
     {
-        if (_jumping) return;
+        if (_jumping || _dead) return;
         _delay -= Time.deltaTime;
         if (_delay <= 0f)
         {
@@ -48,23 +49,71 @@ public class Coily : MonoBehaviour
         _jumping = true;
         _animator.SetBool(Jumping, true);
         Vector3 location = GetRandomJumpLocation();
+        if (BoardManager.LandingOutOfBounds(location))
+        {
+            _dead = true;
+            ScoreManager.Instance.AddScore(500);
+            location = LocationOffEdge(location);
+            transform.DOJump(location, 25, 1, 1).SetEase(Ease.InSine).SetAutoKill();
+            CoilyDied.Invoke();
+            return;
+        }
         transform.DOJump(location, 4, 1, 0.5f).SetEase(Ease.Linear).SetAutoKill();
+    }
+
+    Vector3 LocationOffEdge(Vector3 location)
+    {
+        Vector3 offEdgeLocation = location;
+        offEdgeLocation.y = -10;
+        if (location.z > 20)
+        {
+            offEdgeLocation.z = 30;
+        }
+        else if (location.z < 0)
+        {
+            offEdgeLocation.z = -10;
+        }
+        else if (location.x < 0)
+        {
+            offEdgeLocation.x = -10;
+        }
+        else if (location.x > 18)
+        {
+            offEdgeLocation.x = 28;
+        }
+        else
+        {
+            if (_transform.eulerAngles == BoardManager.SouthEast)
+            {
+                offEdgeLocation.x += 10;
+            }
+            else
+            {
+                offEdgeLocation.z -= 10;
+            }
+        }
+
+        return offEdgeLocation;
     }
 
     void OnCollisionEnter(Collision other)
     {
-        if (!_jumping) return;
-        _jumping = false;
-        _animator.SetBool(Jumping, false);
-        _animator.SetTrigger(Landed);
+        if (_jumping)
+        {
+            _jumping = false;
+            _animator.SetBool(Jumping, false);
+            _animator.SetTrigger(Landed);
+            _delay = _jumpDelay;
+        }
+
         if (other.collider.TryGetComponent<QBert>(out var qBert))
         {
-            Debug.Log($"QBert collided with Coily!");
+            _dead = true;
             qBert.KillQBert();
             CoilyDied.Invoke();
             return;
         }
-        _delay = _jumpDelay;
+
         if (!(_transform.position.y < 4) || !_egg.activeSelf) return;
         _egg.SetActive(false);
         _snake.SetActive(true);

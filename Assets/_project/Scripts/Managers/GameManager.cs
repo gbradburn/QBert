@@ -17,11 +17,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _qBertPrefab;
     [SerializeField] Vector3 _qBertStartPosition, _qBertStartRotation;
     [SerializeField] AudioClip _victorySound, _gameOverSound;
+    [SerializeField] int _extraLifeInterval = 8000;
+    
     GameStates _gameState;
     BoardManager _boardManager;
     Transform _transform;
     QBert _qBert;
     int _lives;
+    int _nextExtraLife;
     Vector3 _qBertSpawnPosition, _qBertSpawnRotation;
 
     public static GameManager Instance;
@@ -68,7 +71,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        ScoreManager.Instance.ScoreChanged.AddListener(OnScoreChanged);
         ReadyToPlay();
+    }
+
+    void OnScoreChanged()
+    {
+        if (ScoreManager.Instance.Score > _nextExtraLife)
+        {
+            ++Lives;
+            _nextExtraLife += _extraLifeInterval;
+        }
     }
 
     void Update()
@@ -84,6 +97,7 @@ public class GameManager : MonoBehaviour
     {
         GameState = GameStates.GameStarted;
         Lives = 3;
+        _nextExtraLife = _extraLifeInterval;
         StartRound();
     }
     
@@ -115,13 +129,14 @@ public class GameManager : MonoBehaviour
     IEnumerator NextLevel()
     {
         _qBert.gameObject.SetActive(false);
+        ScoreManager.Instance.AddLevel();
         GameState = GameStates.LevelComplete;
         MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_victorySound);
         _boardManager.ShowVictoryEffect();
         yield return new WaitForSeconds(9f);
-        ScoreManager.Instance.AddLevel();
         _boardManager.SetUpBoard();
+        ResetQBertSpawnPosition();
         StartRound();
     }
 
@@ -134,8 +149,7 @@ public class GameManager : MonoBehaviour
     IEnumerator HandleQBertDeath()
     {
         yield return new WaitForSeconds(3f);
-        _qBertSpawnPosition = _qBert.transform.position;
-        _qBertSpawnRotation = _qBert.Body.eulerAngles;
+        ResetQBertSpawnPosition(_qBert.transform.position.y > 0);
         _qBert.gameObject.SetActive(false);
         if (Lives > 0)
         {
@@ -158,10 +172,23 @@ public class GameManager : MonoBehaviour
     {
         MusicManager.Instance.PlayIntroMusic();
         Lives = 3;
-        _qBertSpawnPosition = _qBertStartPosition;
-        _qBertSpawnRotation = _qBertStartRotation;
+        _nextExtraLife = _extraLifeInterval;
         ScoreManager.Instance.ResetScore();
         _boardManager.SetUpBoard();
+        ResetQBertSpawnPosition();
         GameState = GameStates.Ready;
+    }
+
+    void ResetQBertSpawnPosition(bool useLastPosition = false)
+    {
+        if (useLastPosition)
+        {
+            _qBertSpawnPosition = _qBert.transform.position;
+            _qBertSpawnRotation = _qBert.Body.eulerAngles;
+            return;
+        }
+
+        _qBertSpawnPosition = _qBertStartPosition;
+        _qBertSpawnRotation = _qBertStartRotation;
     }
 }

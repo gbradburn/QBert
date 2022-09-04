@@ -212,6 +212,7 @@ public class QBert : MonoBehaviour
     {
         if (_dead) return;
         _dead = true;
+        MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_deathSound);
         _animator.StopPlayback();
         _speechBubble.SetActive(true);

@@ -96,7 +96,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (!_coily) return;
         _coily.CoilyDied.RemoveListener(OnCoilyDied);
-        Destroy(_coily.gameObject);
+        Destroy(_coily.gameObject, 2f);
         _coily = null;
     }
 }

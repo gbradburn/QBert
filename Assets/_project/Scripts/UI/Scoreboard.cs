@@ -7,7 +7,7 @@ using UnityEngine;
 public class Scoreboard : MonoBehaviour
 {
     [SerializeField] GameObject[] _playerLives;
-    [SerializeField] TMP_Text _levelText, _scoreText, _highScoreText;
+    [SerializeField] TMP_Text _levelText, _scoreText, _highScoreText, _bonusPointsText;
     [SerializeField] TMP_Text _levelCompleteText, _gameOverText, _playAgainText;
 
     bool _waitingForKeyPress;
@@ -36,6 +36,7 @@ public class Scoreboard : MonoBehaviour
                 _levelCompleteText.gameObject.SetActive(false);
                 _gameOverText.gameObject.SetActive(false);
                 _playAgainText.gameObject.SetActive(false);
+                _bonusPointsText.gameObject.SetActive(false);
                 break;
             case GameManager.GameStates.RoundStarted:
             case GameManager.GameStates.QBertDied:
@@ -43,11 +44,14 @@ public class Scoreboard : MonoBehaviour
                 _levelText.gameObject.SetActive(true);
                 _gameOverText.gameObject.SetActive(false);
                 _playAgainText.gameObject.SetActive(false);
+                _bonusPointsText.gameObject.SetActive(false);
                 break;
             case GameManager.GameStates.LevelComplete:
                 _levelText.gameObject.SetActive(false);
-                _levelCompleteText.text = $"Level {ScoreManager.Instance.Level} Complete";
+                _levelCompleteText.text = $"Level {ScoreManager.Instance.Level - 1} Complete";
                 _levelCompleteText.gameObject.SetActive(true);
+                _bonusPointsText.text = $"Bonus {ScoreManager.Instance.BonusPoints} points";
+                _bonusPointsText.gameObject.SetActive(true);
                 _gameOverText.gameObject.SetActive(false);
                 _playAgainText.gameObject.SetActive(false);
                 break;
@@ -56,15 +60,18 @@ public class Scoreboard : MonoBehaviour
                 _levelCompleteText.gameObject.SetActive(false);
                 _gameOverText.gameObject.SetActive(true);
                 _playAgainText.gameObject.SetActive(false);
+                _bonusPointsText.gameObject.SetActive(false);
                 break;
             case GameManager.GameStates.Ready:
                 _levelText.gameObject.SetActive(false);
                 _levelCompleteText.gameObject.SetActive(false);
                 _gameOverText.gameObject.SetActive(false);
                 _playAgainText.gameObject.SetActive(true);
+                _bonusPointsText.gameObject.SetActive(false);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                Debug.LogError($"Invalid GameState value '{GameManager.Instance.GameState}'.");
+                break;
         }
     }
 

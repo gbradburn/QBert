@@ -123,9 +123,10 @@ public class BoardManager : MonoBehaviour
         while (duration > 0f)
         {
             duration -= Time.deltaTime;
+            var color = Random.ColorHSV();
             foreach (var platform in _platforms)
             {
-                platform.SetPlatformColor(Random.ColorHSV());
+                platform.SetPlatformColor(color);
             }
 
             yield return null;

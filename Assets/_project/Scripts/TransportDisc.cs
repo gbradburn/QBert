@@ -41,6 +41,7 @@ public class TransportDisc : MonoBehaviour
     {
         _destination = _transform.position.z > 10 ? _destinationRight : _destinationLeft; 
         _isActive = true;
+        ScoreManager.Instance.UseTransportDisc();
         _transform.DOMove(_destination, 2f)
             .SetEase(Ease.Linear)
             .SetAutoKill(true);
