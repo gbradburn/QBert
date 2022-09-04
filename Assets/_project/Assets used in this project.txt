@@ -1,0 +1,21 @@
+Asset Store Packages
+DOTween - https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676
+
+Music files
+https://freesound.org/people/iut_Paris8/sounds/110505/
+https://freesound.org/people/annoyedCactus/sounds/455017/
+https://freesound.org/people/chungus43A/sounds/595665/
+
+Sound files
+https://freesound.org/people/cabled_mess/sounds/350983/
+https://freesound.org/people/Chilljeremy/sounds/395482/
+https://freesound.org/people/OwlStorm/sounds/404792/
+https://freesound.org/people/LorenzoTheGreat/sounds/417792/
+https://freesound.org/people/bolkmar/sounds/442327/
+https://freesound.org/people/FunWithSound/sounds/456965/
+https://freesound.org/people/se2001/sounds/518102/
+https://freesound.org/people/se2001/sounds/518126/
+https://lazy-brain-games.itch.io/hanna-barera-sfx5-lazy-brain-games-edition
+
+Models
+Everything Libary 01 - Animals (using Snake model) - https://www.davidoreilly.com/library
