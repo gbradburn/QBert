@@ -19,3 +19,6 @@ https://lazy-brain-games.itch.io/hanna-barera-sfx5-lazy-brain-games-edition
 
 Models
 Everything Libary 01 - Animals (using Snake model) - https://www.davidoreilly.com/library
+
+Fonts
+https://www.1001freefonts.com/d/2778/arcade.zip

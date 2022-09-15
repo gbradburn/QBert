@@ -128,9 +128,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator NextLevel()
     {
+        GameState = GameStates.LevelComplete;
         _qBert.gameObject.SetActive(false);
         ScoreManager.Instance.AddLevel();
-        GameState = GameStates.LevelComplete;
         MusicManager.Instance.Stop();
         SoundManager.Instance.PlayAudioClip(_victorySound);
         _boardManager.ShowVictoryEffect();

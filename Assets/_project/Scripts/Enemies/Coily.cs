@@ -29,10 +29,17 @@ public class Coily : MonoBehaviour
 
     void OnEnable()
     {
+        GameManager.Instance.GameStateChanged.AddListener(OnGameStateChanged);
         _delay = _jumpDelay;
         _egg.SetActive(true);
         _snake.SetActive(false);
     }
+
+    void OnDisable()
+    {
+        GameManager.Instance.GameStateChanged.RemoveListener(OnGameStateChanged);
+    }
+
 
     void Update()
     {
@@ -42,6 +49,14 @@ public class Coily : MonoBehaviour
         {
             Jump();
         }
+    }
+
+    void OnGameStateChanged()
+    {
+        if (GameManager.Instance.GameState is not (GameManager.GameStates.LevelComplete
+            or GameManager.GameStates.QBertDied)) return;
+        DOTween.KillAll();
+        gameObject.SetActive(false);
     }
 
     void Jump()

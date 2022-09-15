@@ -63,6 +63,7 @@ public class EnemyManager : MonoBehaviour
 
     void DestroyAllEnemies()
     {
+        Debug.Log($"DestroyAllEnemies()");
         if (_coily)
         {
             DestroyCoily();
@@ -94,7 +95,9 @@ public class EnemyManager : MonoBehaviour
 
     void DestroyCoily()
     {
+        Debug.Log("DestroyCoily()");
         if (!_coily) return;
+        Debug.Log("removing coily listener and destroying coily gameobject.");
         _coily.CoilyDied.RemoveListener(OnCoilyDied);
         Destroy(_coily.gameObject, 2f);
         _coily = null;

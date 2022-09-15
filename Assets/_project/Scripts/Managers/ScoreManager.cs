@@ -5,7 +5,7 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
     public int Score { get; private set; }
-    public int HiScore { get; private set; }
+    public int HighScore { get; private set; }
     public int Level { get; private set; }
     public int BonusPoints { get; private set; }
     
@@ -26,7 +26,7 @@ public class ScoreManager : MonoBehaviour
     
     void OnEnable()
     {
-        HiScore = PlayerPrefs.GetInt("HighScore", 0);
+        HighScore = PlayerPrefs.GetInt("HighScore", 0);
         Score = 0;
         Level = 1;
         ScoreChanged.Invoke();
@@ -35,10 +35,13 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int points)
     {
         Score += points;
+        if (Score > HighScore)
+        {
+            HighScore = Score;
+            PlayerPrefs.SetInt("HighScore", HighScore);
+        }
+
         ScoreChanged.Invoke();
-        if (Score <= HiScore) return;
-        HiScore = Score;
-        PlayerPrefs.SetInt("HighScore", HiScore);
     }
 
     public void ResetScore()

@@ -41,7 +41,7 @@ public class BoardManager : MonoBehaviour
     
     public static bool LandingOutOfBounds(Vector3 targetPosition)
     {
-        return targetPosition.z is > 20 or < 0 || targetPosition.x is < 0 or > 18 || targetPosition.y < 2.5f;
+        return targetPosition.z is > 20 or < -0.25f || targetPosition.x is < -0.25f or > 18 || targetPosition.y < 2.5f;
     }
     
     public int LegalJumpLocations(List<Vector3> legalJumpPositions, Vector3 position, bool down = true)
