@@ -54,7 +54,7 @@ public class QBert : MonoBehaviour
         TriggerLandingAnimation();
         if (!CollidedWithPlatform(collision, out var platform)) return;
         _jumping = false;
-        if (!platform.Flipped)
+        if (!_dead && !platform.Flipped)
         {
             platform.SetFlippedState(true);
             return;

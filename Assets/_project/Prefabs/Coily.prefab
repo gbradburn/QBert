@@ -77,18 +77,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 643629282136615602}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 535e3279acd132f4d9e77dee001c02a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 2315494746344878409}
-  _egg: {fileID: 1572073427300107647}
-  _snake: {fileID: 643629282163816763}
   _jumpDelay: 0.5
-  CoilyDied:
+  EnemyDied:
     m_PersistentCalls:
       m_Calls: []
+  _egg: {fileID: 1572073427300107647}
+  _snake: {fileID: 643629282163816763}
 --- !u!54 &253567517
 Rigidbody:
   m_ObjectHideFlags: 0

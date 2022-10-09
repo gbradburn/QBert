@@ -8,10 +8,11 @@ public class TransportDisc : MonoBehaviour
     [SerializeField] Vector3 _destinationLeft, _destinationRight;
     Vector3 _destination;
     Transform _transform, _disc;
-    public bool _isActive;
+    public bool IsActive { get; private set; }
     QBert _qBert;
 
     bool ReachedDestination => Mathf.Approximately(0f, Vector3.Distance(_transform.position, _destination));
+    public bool LeftDisc => _destination == _destinationLeft;
 
     void Awake()
     {
@@ -21,11 +22,11 @@ public class TransportDisc : MonoBehaviour
 
     void Update()
     {
-        if (!_isActive) return;
+        if (!IsActive) return;
         _disc.Rotate(0f, _rotateSpeed * Time.deltaTime, 0f, Space.Self);
         if (!ReachedDestination) return;
         _qBert.JumpToPlatform();
-        _isActive = false;
+        IsActive = false;
         gameObject.SetActive(false);
     }
 
@@ -40,7 +41,7 @@ public class TransportDisc : MonoBehaviour
     void ActivateDisc()
     {
         _destination = _transform.position.z > 10 ? _destinationRight : _destinationLeft; 
-        _isActive = true;
+        IsActive = true;
         ScoreManager.Instance.UseTransportDisc();
         _transform.DOMove(_destination, 2f)
             .SetEase(Ease.Linear)

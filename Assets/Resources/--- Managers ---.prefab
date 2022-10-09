@@ -275,6 +275,7 @@ MonoBehaviour:
   _qBertStartRotation: {x: 0, y: 180, z: 0}
   _victorySound: {fileID: 8300000, guid: 8f3978978361a4c41a8b2c5265d2681a, type: 3}
   _gameOverSound: {fileID: 8300000, guid: 9ba5f9744046a0e4d90e70c99068f103, type: 3}
+  _extraLifeInterval: 8000
   LivesChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -314,6 +315,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _coilyPrefab: {fileID: 643629282136615602, guid: 166d15b3643d59b4786c3c25f5cbe79d,
     type: 3}
+  _enemyPrefabs:
+  - {fileID: 2554713364222103147, guid: 5305bd0d7c805fd478b3ab8ae88fb228, type: 3}
   _spawnDelay: 3
 --- !u!1 &4822085717319511142
 GameObject:

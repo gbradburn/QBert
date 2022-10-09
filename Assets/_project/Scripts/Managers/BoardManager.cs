@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour
     List<IPlatform> _platforms;
     List<TransportDisc> _transportDiscs;
     Transform _transform;
-    List<Vector3> _downDirections, _upDirections;
+    List<Vector3> _downDirections, _upDirections, _sideDirections;
 
     void Awake()
     {
@@ -28,10 +28,17 @@ public class BoardManager : MonoBehaviour
             new Vector3(-3, 3, 0),
             new Vector3(0, 3, 3)
         };
-        
+        _sideDirections = new List<Vector3>
+        {
+            new Vector3(-3, 0, -3),
+            new Vector3(3, 0, 3)
+        };
+
+
     }
 
     public int UnFlippedPlatforms => _platforms.Count(p => !p.Flipped);
+    public TransportDisc ActiveTransportDisc => _transportDiscs.FirstOrDefault(d => d.IsActive);
 
     public static readonly Vector3 NoChange = Vector3.up;
     public static readonly Vector3 NorthEast = Vector3.zero;
@@ -39,16 +46,20 @@ public class BoardManager : MonoBehaviour
     public static readonly Vector3 SouthEast = new Vector3(0, 90, 0);
     public static readonly Vector3 SouthWest = new Vector3(0, 180, 0);    
     
-    public static bool LandingOutOfBounds(Vector3 targetPosition)
+    public static bool LandingOutOfBounds(Vector3 targetPosition, bool sideWalker=false)
     {
+        if (sideWalker)
+        {
+            return targetPosition.z is > 17 or < -2.5f || targetPosition.x is < -2.5f or > 18 || targetPosition.y < -0.5f;
+        }
         return targetPosition.z is > 20 or < -0.25f || targetPosition.x is < -0.25f or > 18 || targetPosition.y < 2.5f;
     }
     
-    public int LegalJumpLocations(List<Vector3> legalJumpPositions, Vector3 position, bool down = true)
+    public int LegalJumpLocations(List<Vector3> legalJumpPositions, Vector3 position, bool downOnly = true, bool sideWalker=false)
     {
         legalJumpPositions.Clear();
 
-        if (down)
+        if (downOnly)
         {
             foreach (var vector in _downDirections)
             {
@@ -65,10 +76,15 @@ public class BoardManager : MonoBehaviour
         foreach (var vector in _upDirections)
         {
             Vector3 landingPosition = position + vector;
-            if (!BoardManager.LandingOutOfBounds(position))
+            if (sideWalker || !BoardManager.LandingOutOfBounds(landingPosition))
             {
-                legalJumpPositions.Add(position);
+                legalJumpPositions.Add(landingPosition);
             }
+        }
+
+        if (sideWalker)
+        {
+            legalJumpPositions.AddRange(_sideDirections.Select(vector => position + vector));
         }
 
         return legalJumpPositions.Count;
